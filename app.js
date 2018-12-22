@@ -97,7 +97,6 @@ function initMap() {
         // render on addition [ cords.length ] 
 
         if (n_cords > 1) {
-            console.log("Getting Centroid..");
 
             if (isNewPoint) {
                 centroid = {
@@ -142,7 +141,7 @@ function initMap() {
 
         } else if (n_cords == 1) {
             centroid = addPoint;
-            console.log("ONLY SINGLE COORDINATES ");
+            console.log("ONLY SINGLE COORDINATE ");
 
         } else {
             console.log("NO COORDINATES ;( ");
@@ -178,7 +177,7 @@ function initMap() {
                     });
 
                 } else {
-                    console.log('No results found');
+                    console.log('NO RESULT FOUND');
                 }
             } else {
                 debug(" Geocoder status:" + status);
@@ -234,8 +233,8 @@ function initMap() {
                 if (status == google.maps.DirectionsStatus.OK) {;
                     renderRoute(response);
                 } else {
-                    console.log("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
-                    debug(" Directions status:" + status);
+                    console.log("Directions Request From " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
+                    debug(" Directions Status:" + status);
                 }
             });
         }
@@ -331,7 +330,6 @@ function initMap() {
 
     function addPeople() {
         if (objLocation) {
-            // console.log(objLocation.formatted_address, objLocation);
 
             cord = {
                 lat: objLocation.geometry.location.lat(),
@@ -414,31 +412,38 @@ function initMap() {
 
     function showPeople() {
         var people = document.getElementById("online_people"),
-            li, cancelButton;
+            li;
         people.innerHTML = '';
         for (i = 0; i < n_cords; i++) {
             li = document.createElement("li");
 
             var name = placesData[i].name;
-            var len = placesData[i].length;
+            var len = placesData[i].name.length;
 
             if (len > 30) {
                 name = name.substring(0, 30);
                 name += " ..";
             }
-
-
-            li.innerHTML = "<p> <i class='material-icons red-text inline-icon remove-me' id='remove-me'>cancel</i> &nbsp;" + name + "  </p>";
+            li.innerHTML = "<p> <i class='material-icons red-text inline-icon remove-me' id='remove-me' style='cursor:pointer'>cancel</i> &nbsp;<b>" + name + "</b>  </p>";
 
             $(document).on('click', "#remove-me", function (e) {
+
                 var entry = $(this).parent();
                 var placeName = entry.text().substring(8),
                     j;
                 entry.remove();
+
                 placeName = placeName.substring(1, placeName.length - 2);
+
                 for (j = 0; j < placesData.length; j++) {
-                    if (placesData[j].name === placeName) {
-                        console.log("HEy");
+                    name = placesData[j].name;
+
+                    if (name.length > 30) {
+                        name = name.substring(0, 30);
+                        name += " ..";
+                    }
+
+                    if (name === placeName) {
                         placesData.splice(j, 1);
                         n_cords -= 1;
                         publish({
